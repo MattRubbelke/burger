@@ -6,6 +6,9 @@ var express = require("express");
 var app = express();
 var PORT = process.env.PORT || 3000;
 
+// Serve static content for the app from the "public" directory in the application directory.
+app.use(express.static("public"));
+
 // Sets up the Express app to handle data parsing
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -17,28 +20,9 @@ var exphbs = require("express-handlebars");
 app.engine("handlebars", exphbs({ defaultLayout: "main" }));
 app.set("view engine", "handlebars");
 
-// Importing "mysql" module
-var mysql = require("mysql");
-
-// Sets up connection
-var connection = mysql.createConnection({
-    host: "localhost",
-    port: 8889,
-    user: "root",
-    password: "root",
-    database: "quotes_db"
-  });
-
-//   Creates Connection
-connection.connect(function(err) {
-if (err) {
-    console.error("error connecting: " + err.stack);
-    return;
-}
-console.log("connected as id " + connection.threadId);
-});
-
-
+// Imports routes and gives the server access
+var routes = require("./controller/burgerController")
+app.use(routes)
 
 // Start our server so that it can begin listening to client requests.
 app.listen(PORT, function() {

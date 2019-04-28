@@ -1,0 +1,94 @@
+<div id="container">
+  <h1>Burgers!</h1>
+
+  <div class="burgers">
+    <h2>Burgers Ready!</h2>
+
+    <ul>
+      {{#each burgers}}
+        {{#unless devoured}}
+            <li>{{this.burger_name}}
+            <button data-id="{{this.id}}" data-newsleep="{{devoured}}" class="devour">Devour!</button>
+            </li>
+        {{/unless}}
+      {{/each}}
+    </ul>
+  </div>
+
+  <div class="burgers">
+    <h2>Burgers Eaten!</h2>
+
+    <ul>
+      {{#each burgers}}
+        {{#if devoured}}
+        <li>
+          {{this.burger_name}}
+        </li>
+        {{/if}}
+      {{/each}}
+    </ul>
+  </div>
+
+<div id="form">
+  <h2 id="form-title">Add a Burger</h2>
+  <form class="create-form">
+
+    <div class="form-group">
+      <label for="bu">Burger:</label>
+      <input type="text" id="burger-name" name="burger_name">
+    </div>
+
+    <button type="submit">Add Burger</button>
+  </form>
+</div>
+</div>
+
+{{!-- JAVA --}}
+<script>
+$(function() {
+/* DEVOURS THE BURGER */
+  $(".devour").on("click", function(event) {
+    var id = $(this).data("id");
+    var eaten = {
+      devoured: 1
+    };
+
+    // Send the PUT request.
+    $.ajax("/api/burgers/" + id, {
+      type: "PUT",
+      data: eaten
+    }).then(
+      function() {
+        console.log("You ate the burger");
+        // Reload the page to get the updated list
+        location.reload();
+      }
+    );
+  });
+
+////////////////////////////////////////////////////////
+/* ADDS A BURGER */
+  $(".create-form").on("submit", function(event) {
+    // Make sure to preventDefault on a submit event.
+    event.preventDefault();
+
+    var newBurger = {
+      burger_name: $("#burger-name").val().trim(),
+      devoured: 0
+    };
+    
+    console.log("You inputted this burger" + newBurger)
+    // Send the POST request.
+    $.ajax("/api/burgers", {
+      type: "POST",
+      data: newBurger
+    }).then(
+      function() {
+        console.log("added a new burger");
+        // Reload the page to get the updated list
+        location.reload();
+      }
+    );
+  })
+})
+</script>
